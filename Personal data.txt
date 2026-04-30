@@ -1,0 +1,309 @@
+1.⁠ ⁠Personal_Details
+
+First_Name      VARCHAR2 (30) 
+Last_Name       VARCHAR2 (35)
+Age (DOB)       NUMBER (10)
+Gender          VARCHAR2(8)
+Birth_Cert_No   NUMBER (20)       Primary Key (PK) 
+
+
+2.⁠ ⁠Contact_Details
+
+Phone_No        NUMBER (15)       Primary Key (PK)
+Email           VARCHAR2 (20)
+T_Address       VARCHAR2 (20)
+P_Address       VARCHAR2 (20)
+Birth_Cert_No   NUMBER (20)       Foreign Key (FK)
+
+
+3.⁠ ⁠Qualification
+
+Reg_No                NUMBER (20)      Primary Key (PK)
+Primary_School        VARCHAR2 (30)
+Secondary_Level       VARCHAR2 (30) 
+Higher_Level          VARCHAR2 (30) 
+Birth_Cert_No         NUMBER (20)      Foreign Key (FK)
+
+
+4.⁠ ⁠Medical_Info
+
+
+Medical_ID         NUMBER (20)         Primary Key (PK)  
+Blood_Group        VARCHAR2 (5) 
+Birth_Cert_No      NUMBER (20)         Foreign Key (FK) 
+
+
+-- Main Table
+CREATE TABLE Personal_Details (
+    F_Name VARCHAR2(30),
+    L_Name VARCHAR2(30),
+    Date_of_Birth DATE,
+    Gender VARCHAR2(8),
+    Birth_Certificate_no NUMBER(10)
+);
+
+-- Contact Table
+CREATE TABLE Contact_Details (
+    Phone_no NUMBER(15),
+    Email VARCHAR2(20),
+    T_Address VARCHAR2(20),
+    P_Address VARCHAR2(20),
+    Birth_Certificate_no NUMBER(10)
+);
+
+-- Qualification Table
+CREATE TABLE Qualification (
+    Primary_level VARCHAR2(30),
+    Secondary_level VARCHAR2(30),
+    Higher_level VARCHAR2(30),
+    Registration_no VARCHAR2(20),
+    Birth_Certificate_no NUMBER(10)
+);
+
+-- Medical Table
+CREATE TABLE Medical_Info (
+    Blood_group VARCHAR2(5),
+    Medical_id NUMBER(10),
+    Birth_Certificate_no NUMBER(10)
+);
+
+PERSONAL DETAILS
+ALTER TABLE Personal_Details 
+ADD CONSTRAINT pk_personal_details PRIMARY KEY (Birth_Certificate_no);
+
+CONTACT DETAILS
+ALTER TABLE Contact_Details 
+ADD CONSTRAINT pk_contact_details PRIMARY KEY (Phone_no);
+
+ALTER TABLE Contact_Details 
+ADD CONSTRAINT fk_contact_details FOREIGN KEY (Birth_Certificate_no) 
+REFERENCES Personal_Details (Birth_Certificate_no);
+
+QUALIFICATION
+
+ALTER TABLE Qualification 
+ADD CONSTRAINT pk_qualification PRIMARY KEY (Registration_no);
+
+ALTER TABLE Qualification 
+ADD CONSTRAINT fk_qualification FOREIGN KEY (Birth_Certificate_no) 
+REFERENCES Personal_Details (Birth_Certificate_no);
+
+
+MEDICAL INFO
+
+ALTER TABLE Medical_Info 
+ADD CONSTRAINT pk_medical_info PRIMARY KEY (Medical_id);
+
+-- Adding the FK for Medical_Info (based on your ER diagram logic)
+ALTER TABLE Medical_Info 
+ADD CONSTRAINT fk_medical_info FOREIGN KEY (Birth_Certificate_no) 
+REFERENCES Personal_Details (Birth_Certificate_no);
+
+
+
+
+-- Steps to Create Object Types
+
+CREATE OR REPLACE TYPE address_type AS OBJECT (
+    street VARCHAR2(25) ,
+    city  VARCHAR2(25),
+    country VARCHAR2(20));
+/
+SHOW ERROR
+
+
+
+***object type as column
+
+CREATE TABLE sites (
+    site_id NUMBER(6),
+    address address_type
+);
+
+
+CREATE OR REPLACE TYPE company_type AS OBJECT(
+company_name            VARCHAR2(25),
+training_budget         NUMBER(10,2),
+address     address_type);
+/
+
+
+STEPS TO CREATE OBJECT COLUMN AND TABLES
+
+
+STEP 1 CREATE TYPE
+CREATE OR REPLACE TYPE object_type_name AS OBJECT(
+attribute DATATYPE(SIZE),
+attribute DATATYPE(SIZE),
+attribute DATATYPE(SIZE));
+/
+
+STEP2 USE AS AN OBJECT TABLE DEFINITION 
+CREATE TABLE object_table_name OF object_type_name;
+
+
+step3 use in relation table definition
+
+CREATE TABLE table_name(
+attribute DATATYPE(SIZE),
+attribute object_type_name,
+attribute REF object_type_name
+SCOPE IS object_table_name);
+
+
+
+
+\\\\examples 
+CREATE OR REPLACE TYPE personal_obj_type AS OBJECT(
+    F_Name VARCHAR2(30),
+    L_Name VARCHAR2(30),
+    Date_of_Birth DATE,
+    Gender VARCHAR2(8),
+    Birth_Certificate_no NUMBER(10)
+);
+/
+
+CREATE TABLE personal_obj_table OF personal_obj_type (
+    Birth_Certificate_no PRIMARY KEY
+);
+
+CREATE TABLE Contact_Relational (
+    Phone_no NUMBER(15) PRIMARY KEY,
+    Email VARCHAR2(20),
+    -- Using the object type as a column
+    Personal_Data personal_obj_type,
+    -- Using a REF to point to a specific row in the object table
+    Personal_Ref REF personal_obj_type SCOPE IS personal_obj_table
+);
+
+
+drop /delte
+DROP TABLE Tablename_type;
+  
+
+
+MULTIDIMENSIONAL VARRAY
+
+#simple varray
+CREATE TYPE varray_type_name AS
+VARRAY(size) OF datatype;
+
+CREATE OR REPLACE TYPE phone_list_type AS 
+VARRAY(5) OF NUMBER(15);
+/
+
+
+CREATE OR REPLACE TYPE address_obj_type AS OBJECT (
+    City VARCHAR2(30),
+    Street VARCHAR2(30)
+);
+/
+SHOW ERROR
+
+
+STEPS TO CREATING NESTED TABLE
+
+steps1:CREATE THE OBJECT TYPE
+
+CREATE TYPE object_type_name AS OBJECT(
+attribute_name  DATATYPE(SIZE),
+attribute_name  DATATYPE(SIZE),
+attribute_name  DATATYPE(SIZE);
+/
+
+STEP2:USE THE TYPE CREATE THE NESTED TABLE OBJECT TYPE
+CREATE TYPE object_table_type_name
+AS TABLE OF object_type_name;
+/
+
+STEPS TO CREATING NESTED TABLE
+CREATE TABLE relational_table_name(
+column_name   DATATYPE(SIZE),
+column_name  DATATYPE(SIZE),
+colum_name   object_table_type_name)
+NESTED TABLE nested_column_name STORE AS nested_table_object_name;
+
+drop type
+DROP TYPE OBJECT_TYPE_NAME;
+
+
+***what are the steps used to create the following info
+contact details should be stored as a varray column in a relational table called students
+student id, 
+surname, 
+contact home house no, street, town, postcode, 
+conatct uni house no, street, town, postcode, 
+contact work house no, street, town, postcode***
+
+answer
+
+CREATE TYPE location_type AS OBJECT (
+    house_no   VARCHAR2(20),
+    street     VARCHAR2(50),
+    town       VARCHAR2(50),
+    postcode   VARCHAR2(20)
+);
+/
+SHOW ERROR
+
+
+classwork
+
+CREATE TYPE contact_varray AS VARRAY(3) OF location_type;
+
+CREATE TABLE students (
+    student_id   NUMBER PRIMARY KEY,
+    surname      VARCHAR2(50),
+    contacts     contact_varray_type
+) 
+NESTED TABLE contacts STORE AS contacts_table;
+
+
+
+-- Create object type
+CREATE OR REPLACE TYPE personal_details AS OBJECT (
+    first_name VARCHAR2(30),
+    last_name  VARCHAR2(30),
+    age        NUMBER(3),
+    email      VARCHAR2(50)
+);
+/
+
+-- Increase VARRAY size to 5
+CREATE OR REPLACE TYPE personal_details_varray_type AS VARRAY(5) OF personal_details;
+/
+
+-- Create table
+CREATE TABLE students (
+    student_id NUMBER(6),
+    school     VARCHAR2(30),
+    personal_information personal_details_varray_type
+);
+
+-- Insert data with different surnames & random emails
+INSERT INTO students 
+VALUES (
+    2025,
+    'NAMI COLLEGE',
+    personal_details_varray_type(
+       personal_details('Dhiraj','Khadka',22,'dhiraj22x1@gmail.com'),
+       personal_details('Rem','Shrestha',21,'rem.shrestha91@yahoo.com'),
+       personal_details('Yammi','Gurung',23,'yammi_g123@outlook.com'),
+       personal_details('Pamri','Thapa',22,'pamri.thapa77@gmail.com'),
+       personal_details('Gia','Rai',20,'gia.rai567@mail.com')
+    )
+);
+
+-- View table
+SELECT * FROM students;
+
+-- Select specific columns
+SELECT student_id, school FROM students;
+
+
+
+
+
+
+
+
