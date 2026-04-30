@@ -300,6 +300,31 @@ SELECT * FROM students;
 -- Select specific columns
 SELECT student_id, school FROM students;
 
+SELECT p.first_name, p.last_name
+FROM students s;
+
+
+-- 1. Create the table
+CREATE TABLE site (
+    site_id NUMBER,
+    contact_code VARCHAR2(10),
+    capacity NUMBER,
+    location_name VARCHAR2(50)
+);
+
+-- 2. Insert multiple rows
+INSERT ALL
+    INTO site (site_id, contact_code, capacity, location_name) VALUES (1000, 'LH401', 32, 'COMPUTER LAB')
+    INTO site (site_id, contact_code, capacity, location_name) VALUES (1000, 'LH201', 100, 'STAFF-ROOM')
+    INTO site (site_id, contact_code, capacity, location_name) VALUES (1000, 'CH201', 10, 'STUDIO')
+    INTO site (site_id, contact_code, capacity, location_name) VALUES (1001, 'LB1', 16, 'LIBRARY')
+    INTO site (site_id, contact_code, capacity, location_name) VALUES (1001, 'DR', 100, 'DINNING ROOM')
+    INTO site (site_id, contact_code, capacity, location_name) VALUES (1001, 'BR', 10, 'BALLROOM')
+SELECT * FROM dual;
+
+-- 3. Verify
+SELECT * FROM site;
+
 
 
 
