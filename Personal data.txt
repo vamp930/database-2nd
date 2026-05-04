@@ -326,6 +326,48 @@ SELECT * FROM dual;
 SELECT * FROM site;
 
 
+**UNION 
+
+
+SELECT Birth_cert_No
+FROM contact_Details
+UNION
+SELECT Birth_cert_No
+FROM Qualification;
+
+
+
+##Sceenario from staff table.
+
+SELECT AVG(balance)
+FROM staff
+where town='OLNEY';
+
+
+SELECT MAX(balance)
+FROM staff
+where town='OLNEY';
+
+SELECT MIN(balance)
+FROM staff
+where town='OLNEY';
+
+SELECT SUM(balance)
+FROM staff
+where town='OLNEY';
+
+
+
+GROUPBY COMMAND
+
+SELECT SUM(balance),dept
+FROM staff
+GROUP BY dept;
+
+
+
+
+
 
 
 
